@@ -1,5 +1,10 @@
+const dns = require("dns");
 const mongoose = require("mongoose");
 const { MONGODB_URI } = require("./env");
+
+// Fix DNS resolution: local DNS (127.0.0.1) doesn't support SRV lookups
+dns.setDefaultResultOrder("ipv4first");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 3000;

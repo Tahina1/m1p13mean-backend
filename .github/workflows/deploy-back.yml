@@ -1,0 +1,62 @@
+name: Deploy Backend to Netlify
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set deployment environment
+        id: env
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "env_label=Production" >> $GITHUB_OUTPUT
+            echo "site_id=${{ secrets.NETLIFY_SITE_ID_BACKEND_PROD }}" >> $GITHUB_OUTPUT
+          else
+            echo "env_label=Development" >> $GITHUB_OUTPUT
+            echo "site_id=${{ secrets.NETLIFY_SITE_ID_BACKEND_DEV }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to Netlify
+        id: netlify_deploy
+        run: |
+          JSON_RESPONSE=$(npx netlify deploy --prod --dir=. --functions=netlify/functions --site=${{ steps.env.outputs.site_id }} --json)
+          DEPLOY_URL=$(echo $JSON_RESPONSE | jq -r '.deploy_url')
+          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: Discord notification (success)
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"embeds": [{"title": "🚀 Backend Deploy Success", "color": 5763719, "fields": [{"name": "Repository", "value": "${{ github.repository }}", "inline": true}, {"name": "Branche", "value": "${{ github.ref_name }}", "inline": true}, {"name": "Environnement", "value": "${{ steps.env.outputs.env_label }}", "inline": true}, {"name": "Commit", "value": "${{ github.sha }}", "inline": false}, {"name": "Auteur", "value": "${{ github.actor }}", "inline": true}, {"name": "🔗 Deploy URL", "value": "${{ steps.netlify_deploy.outputs.url }}"}]}]}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Discord notification (failure)
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"embeds": [{"title": "❌ Backend Deploy Failed", "color": 15548997, "description": "Le deploiement du backend a echoue. Verifie les logs sur GitHub Actions.", "fields": [{"name": "Repository", "value": "${{ github.repository }}", "inline": true}, {"name": "Branche", "value": "${{ github.ref_name }}", "inline": true}, {"name": "Environnement", "value": "${{ steps.env.outputs.env_label }}", "inline": true}]}]}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}

@@ -1,0 +1,13 @@
+name: "backend-only"
+services:
+  backend:
+    build: .
+    ports:
+      - 5000:5000
+    env_file:
+      - .env
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - .:/m1p13mean-backend
+      - /m1p13mean-backend/node_modules

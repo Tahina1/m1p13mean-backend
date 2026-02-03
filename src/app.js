@@ -10,6 +10,8 @@ const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(helmet());                           // headers securite
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.json({ limit: '10kb' }));    // limite taille body
@@ -18,8 +20,8 @@ app.use(cookieParser());
 // 100 requetes / 15 min global
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
-// 5 tentatives / 15 min sur login
-app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 5 }));
+// 12 tentatives / 15 min sur login
+app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 12 }));
 
 
 // Connect to MongoDB

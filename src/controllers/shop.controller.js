@@ -15,8 +15,8 @@ exports.getAllShops = async (req, res) => {
 // POST /api/shops
 exports.createShop = async (req, res) => {
     try {
-        const { name, location } = req.body;
-        const newShop = new Shop({ name, location, ownerId: req.user.id });
+        const { name, location, category } = req.body;
+        const newShop = new Shop({ name, location, category, ownerId: req.user.id, gallery: req.gallery });
         await newShop.save();
         return res.status(201).json({ message: "Shop created successfully", shop: newShop });
         

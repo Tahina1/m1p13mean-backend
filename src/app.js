@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const authorize = require("./middlewares/authorize.middleware");
 const authRoutes = require("./routes/auth.routes");
+const shopRoutes = require("./routes/shop.routes");
 
 const app = express();
 
@@ -33,4 +34,5 @@ connectDB().catch((err) => console.error(err));
 // Routes
 app.use("/api/users", authorize("CLIENT"), userRoutes);
 app.use("/api/auth", authRoutes)
+app.use("/api/shops", shopRoutes);
 module.exports = app;

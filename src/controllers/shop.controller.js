@@ -1,4 +1,5 @@
 const Shop = require('../models/shop.model');
+const shopService = require("../services/shop.service");
 
 // GET /api/shops
 exports.getAllShops = async (req, res) => {
@@ -15,11 +16,9 @@ exports.getAllShops = async (req, res) => {
 // POST /api/shops
 exports.createShop = async (req, res) => {
     try {
-        const { name, location, category } = req.body;
-        const newShop = new Shop({ name, location, category, ownerId: req.user.id, gallery: req.gallery });
-        await newShop.save();
-        return res.status(201).json({ message: "Shop created successfully", shop: newShop });
-        
+        const shopData = {...req.body, gallery: req.gallery};
+        const shopResult = await shopService.createShop(shopData);
+        return res.status(201).json({ message: "Shop created successfully", shop: shopResult }); 
         
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message });

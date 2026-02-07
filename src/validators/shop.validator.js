@@ -1,4 +1,5 @@
 const {body, validationResult} = require('express-validator');
+const mongoose = require('mongoose');
 
 // Validation rules for creating a shop 
 exports.validateCreateShop = [
@@ -14,6 +15,11 @@ exports.validateCreateShop = [
     body('location.shopNumber')
         .optional()
         .trim(),
+    body('ownerId')
+        .optional()
+        .custom((value) => mongoose.Types.ObjectId.isValid(value))
+        .withMessage("Invalid owner ID format"),
+
 
     (req, res, next) => {
         const errors = validationResult(req);

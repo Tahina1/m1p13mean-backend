@@ -13,7 +13,7 @@ router.get('/', shopController.getAllShops);
 // POST /api/shops - only accessible for admins
 router.post('/',
     authenticate,
-    authorize("SHOP"),
+    authorize("ADMIN"),
     upload.array('gallery'),
     uploadToVercelBlob,
     validateCreateShop,

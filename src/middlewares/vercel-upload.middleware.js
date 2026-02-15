@@ -1,5 +1,5 @@
 const { put } = require('@vercel/blob');
-const { v4: uuid } = require('uuid');
+const crypto = require("crypto");
 
 const uploadToVercelBlob = async (req, res, next) => {
     if (!req.files || req.files.length === 0) {
@@ -12,7 +12,7 @@ const uploadToVercelBlob = async (req, res, next) => {
     try {
         const uploadedFiles = await Promise.all(
             req.files.map(async (file) => {
-                const fileName = `shops/${uuid()}-${file.originalname}`;
+                const fileName = `shops/${crypto.randomUUID()}-${file.originalname}`;
                 const blobResponse = await put(fileName, file.buffer, {
                     access: "public",
                     contentType: file.mimetype

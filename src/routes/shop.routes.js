@@ -2,7 +2,7 @@ const router = require("express").Router();
 const shopController = require("../controllers/shop.controller");
 const authenticate = require("../middlewares/auth.middleware");
 const authorize = require("../middlewares/authorize.middleware");
-const { validateCreateShop } = require("../validators/shop.validator");
+const { validateCreateShop, validatePatchShop } = require("../validators/shop.validator");
 const { uploadToVercelBlob } = require("../middlewares/vercel-upload.middleware");
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
@@ -26,7 +26,7 @@ router.patch("/:id",
     authorize("ADMIN","SHOP"),
     upload.array("gallery"),
     uploadToVercelBlob,
-    validateCreateShop,
+    validatePatchShop,
     shopController.patchShop
 )
 

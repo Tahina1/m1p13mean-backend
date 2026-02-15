@@ -20,4 +20,14 @@ router.post('/',
     shopController.createShop
 );
 
+//PATCH /api/shops - accessible by admin and shop
+router.patch("/:id",
+    authenticate,
+    authorize("ADMIN","SHOP"),
+    upload.array("gallery"),
+    uploadToVercelBlob,
+    validateCreateShop,
+    shopController.patchShop
+)
+
 module.exports = router;

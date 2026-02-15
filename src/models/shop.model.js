@@ -1,12 +1,5 @@
 const mongoose = require('mongoose');
 
-const gallerySchema = new mongoose.Schema(
-  {
-    url: { type: String, required: true },
-    caption: { type: String }
-  },
-  { _id: false }
-);
 
 const shopSchema = mongoose.Schema(
     {
@@ -24,7 +17,9 @@ const shopSchema = mongoose.Schema(
             type: String,
             index: true
         },
-        gallery: [gallerySchema],
+        gallery: {
+            type: [String],
+        },
         location: {
             floor: { type: String },
             shopNumber: { type: String }

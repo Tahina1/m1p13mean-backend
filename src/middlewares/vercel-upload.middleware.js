@@ -17,10 +17,7 @@ const uploadToVercelBlob = async (req, res, next) => {
                     access: "public",
                     contentType: file.mimetype
                 });
-                return {
-                    url: blobResponse.url,
-                    caption: file.originalname
-                };
+                return blobResponse.url
         }));
 
         req.gallery = uploadedFiles;

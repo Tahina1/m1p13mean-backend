@@ -20,6 +20,13 @@ router.post('/',
     shopController.createShop
 );
 
+//PATCH /api/shops/id/status - only accessible for admins
+router.patch("/:id/status",
+    authenticate,
+    authorize("ADMIN"),
+    shopController.updateShopStatus
+)
+
 //PATCH /api/shops - accessible by admin and shop
 router.patch("/:id",
     authenticate,

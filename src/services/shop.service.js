@@ -35,3 +35,15 @@ exports.patchShop = async (shopId, updatedData) => {
 
     return await shop.save();
 }
+
+exports.updateStatus = async (shopId, status) => {
+    if(!["PENDING", "ACTIVE", "SUSPENDED"].includes(status)){
+        throw new AppError("Invalid status value", 400);
+    }
+    const shop = await Shop.findById(shopId);
+    if (!shop) {
+        throw new AppError("Shop not found", 404);
+    }
+    shop.status = status;
+    return await shop.save();
+}

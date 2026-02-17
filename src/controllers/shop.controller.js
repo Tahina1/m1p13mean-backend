@@ -43,3 +43,15 @@ exports.patchShop = async (req, res) => {
 
     }
 }
+
+exports.updateShopStatus = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedShop = await shopService.updateStatus(id, req.body.status);
+        return res.status(200).json({ message: "Shop status updated successfully", shop: updatedShop });
+        
+    } catch (error) {
+        const status = error.status || 500;
+        return res.status(status).json({ message: error.message });
+    }
+}

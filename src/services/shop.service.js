@@ -74,3 +74,11 @@ exports.getShops = async ({page=1, limit=10, name=null, category=null, status=nu
         throw new AppError(error.message, 500);
     }
 }
+
+exports.getShopById = async (shopId) => {
+    const shop = await Shop.findById(shopId).lean();
+    if (!shop) {
+        throw new AppError("Shop not found", 404);
+    }
+    return shop;
+}

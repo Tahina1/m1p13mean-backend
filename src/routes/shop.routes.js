@@ -8,7 +8,7 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
 // GET /api/shops - accessible for all users
-router.get('/', shopController.getAllShops);
+router.get('/', shopController.getShops);
 
 // POST /api/shops - only accessible for admins
 router.post('/',

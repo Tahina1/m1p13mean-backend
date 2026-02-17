@@ -2,14 +2,21 @@ const Shop = require('../models/shop.model');
 const shopService = require("../services/shop.service");
 
 // GET /api/shops
-exports.getAllShops = async (req, res) => {
+exports.getShops = async (req, res) => {
     try {
-        const shops = await Shop.find();
-        return res.status(200).json(shops);
+        const { page, limit, name, category, status } = req.query;
+        const result = await shopService.getShops({
+            page: parseInt(page) || 1,
+            limit: parseInt(limit) || 10,
+            name,
+            category,
+            status
+        });
+        return res.status(200).json(result);
 
     } catch (error) {
-        //No specific error for select all
-        return res.status(500).json({ message: "Server error", error: error.message });
+        const status = error.status || 500;
+        return res.status(status).json({ message: error.message });
     }
 }
 

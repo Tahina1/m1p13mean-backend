@@ -35,3 +35,50 @@ exports.patchShop = async (shopId, updatedData) => {
 
     return await shop.save();
 }
+
+exports.updateStatus = async (shopId, status) => {
+    if(!["PENDING", "ACTIVE", "SUSPENDED"].includes(status)){
+        throw new AppError("Invalid status value", 400);
+    }
+    const shop = await Shop.findById(shopId);
+    if (!shop) {
+        throw new AppError("Shop not found", 404);
+    }
+    shop.status = status;
+    return await shop.save();
+}
+
+exports.getShops = async ({page=1, limit=10, name=null, category=null, status=null}) => {
+    try {
+        const query = {};
+        if(name) query.name = { $regex: name, $options: 'i' };
+        if(category) query.category = category;
+        if(status) query.status = status;
+        const [shops, total] = await Promise.all([Shop.find(query)
+            .select("name category ownerId status")
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean(),//retourne des objets JS bruts au lieu de documents Mongoose (jusqu'à 60% plus rapide
+            Shop.countDocuments(query)]);
+        return {
+            shops,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalItems: total,
+                limit
+            }
+          };
+        
+    } catch (error) {
+        throw new AppError(error.message, 500);
+    }
+}
+
+exports.getShopById = async (shopId) => {
+    const shop = await Shop.findById(shopId).lean();
+    if (!shop) {
+        throw new AppError("Shop not found", 404);
+    }
+    return shop;
+}

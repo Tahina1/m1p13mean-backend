@@ -46,6 +46,10 @@ exports.validatePatchShop = [
     body('location.shopNumber')
         .optional()
         .trim(),
+    body("status")
+        .not()
+        .exists()
+        .withMessage("Cannot update shop status"),
 
     (req, res, next) => {
         const errors = validationResult(req);

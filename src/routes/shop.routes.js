@@ -7,8 +7,6 @@ const { uploadToVercelBlob } = require("../middlewares/vercel-upload.middleware"
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
-// GET /api/shops - accessible for all users
-router.get('/', shopController.getAllShops);
 
 // POST /api/shops - only accessible for admins
 router.post('/',
@@ -20,6 +18,13 @@ router.post('/',
     shopController.createShop
 );
 
+//PATCH /api/shops/id/status - only accessible for admins
+router.patch("/:id/status",
+    authenticate,
+    authorize("ADMIN"),
+    shopController.updateShopStatus
+)
+
 //PATCH /api/shops - accessible by admin and shop
 router.patch("/:id",
     authenticate,
@@ -29,5 +34,11 @@ router.patch("/:id",
     validatePatchShop,
     shopController.patchShop
 )
+
+// GET /api/shops - accessible for all users
+router.get('/', shopController.getShops);
+
+// GET /api/shops/:id - accessible for all users
+router.get('/:id', shopController.getShopById);
 
 module.exports = router;

@@ -10,11 +10,11 @@ const productSchema = mongoose.Schema(
         description: {
             type: String,
         },
-        categories: {
-            type: [mongoose.Schema.Types.ObjectId],
+        categories: [{
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'ProductCategory',
             index: true
-        },
+        }],
         images: {
             type: [String],
         },
@@ -35,7 +35,8 @@ const productSchema = mongoose.Schema(
         },
         stock: {
             type: Number,
-            default: 0
+            default: 0,
+            min: 0
         },
         viewsCount: {
             type: Number,

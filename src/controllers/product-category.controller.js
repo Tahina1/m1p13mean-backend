@@ -50,12 +50,3 @@ exports.updateCategory = async (req, res) => {
     }
 }
 
-// PATCH /api/product-categories/:id/status
-exports.updateCategoryStatus = async (req, res) => {
-    try {
-        const category = await productCategoryService.updateCategoryStatus(req.params.id, req.body.isActive);
-        return res.status(200).json({ message: "Category status updated successfully", category });
-    } catch (error) {
-        return res.status(error.status || 500).json({ message: error.message });
-    }
-}

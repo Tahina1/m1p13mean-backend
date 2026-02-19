@@ -5,7 +5,6 @@ const authorize = require("../middlewares/authorize.middleware");
 const {
     validateCreateCategory,
     validateUpdateCategory,
-    validateUpdateCategoryStatus,
     validateSearchByName
 } = require("../validators/product-category.validator");
 
@@ -24,14 +23,6 @@ router.post("/",
     authorize("ADMIN"),
     validateCreateCategory,
     productCategoryController.createCategory
-);
-
-// PATCH /api/product-categories/:id/status - admin only (avant /:id pour eviter conflit)
-router.patch("/:id/status",
-    authenticate,
-    authorize("ADMIN"),
-    validateUpdateCategoryStatus,
-    productCategoryController.updateCategoryStatus
 );
 
 // PATCH /api/product-categories/:id - admin only

@@ -13,6 +13,9 @@ exports.validateCreateCategory = [
         .trim()
         .notEmpty().withMessage("Category name is required")
         .isLength({ max: 50 }).withMessage("Category name cannot exceed 50 characters"),
+    body("isActive")
+        .optional()
+        .isBoolean().withMessage("isActive must be a boolean"),
     handleValidation
 ]
 
@@ -22,12 +25,8 @@ exports.validateUpdateCategory = [
         .trim()
         .notEmpty().withMessage("Category name cannot be empty")
         .isLength({ max: 50 }).withMessage("Category name cannot exceed 50 characters"),
-    handleValidation
-]
-
-exports.validateUpdateCategoryStatus = [
     body("isActive")
-        .notEmpty().withMessage("isActive is required")
+        .optional()
         .isBoolean().withMessage("isActive must be a boolean"),
     handleValidation
 ]

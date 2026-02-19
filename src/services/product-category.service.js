@@ -24,7 +24,7 @@ exports.createCategory = async ({ name }) => {
     return await category.save();
 }
 
-exports.updateCategory = async (id, { name }) => {
+exports.updateCategory = async (id, { name, isActive }) => {
     const category = await ProductCategory.findById(id);
     if (!category) throw new AppError("Category not found", 404);
     if (name) {
@@ -35,12 +35,6 @@ exports.updateCategory = async (id, { name }) => {
         if (existing) throw new AppError("Category name already exists", 409);
         category.name = name;
     }
-    return await category.save();
-}
-
-exports.updateCategoryStatus = async (id, isActive) => {
-    const category = await ProductCategory.findById(id);
-    if (!category) throw new AppError("Category not found", 404);
-    category.isActive = isActive;
+    if (isActive !== undefined) category.isActive = isActive;
     return await category.save();
 }

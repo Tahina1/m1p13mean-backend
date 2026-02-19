@@ -17,10 +17,10 @@ exports.getCategoryByName = async (name) => {
     return category;
 }
 
-exports.createCategory = async ({ name }) => {
+exports.createCategory = async ({ name, isActive }) => {
     const existing = await ProductCategory.findOne({ name: { $regex: `^${name}$`, $options: "i" } });
     if (existing) throw new AppError("Category already exists", 409);
-    const category = new ProductCategory({ name });
+    const category = new ProductCategory({ name, ...(isActive !== undefined && { isActive }) });
     return await category.save();
 }
 

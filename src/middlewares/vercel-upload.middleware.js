@@ -1,18 +1,18 @@
 const { put } = require('@vercel/blob');
 const crypto = require("crypto");
 
-const uploadToVercelBlob = async (req, res, next) => {
+const uploadToVercelBlob = (fieldName) => async (req, res, next) => {
     if (!req.files || req.files.length === 0) {
         //Not a good practice to throw error from middleware, but for simplicity
         //return res.status(400).json({ message: "No files uploaded" });
-        req.gallery = [];
+        req[fieldName] = [];
         return next();
     }
 
     try {
         const uploadedFiles = await Promise.all(
             req.files.map(async (file) => {
-                const fileName = `shops/${crypto.randomUUID()}-${file.originalname}`;
+                const fileName = `files/${crypto.randomUUID()}-${file.originalname}`;
                 const blobResponse = await put(fileName, file.buffer, {
                     access: "public",
                     contentType: file.mimetype
@@ -20,7 +20,7 @@ const uploadToVercelBlob = async (req, res, next) => {
                 return blobResponse.url
         }));
 
-        req.gallery = uploadedFiles;
+        req[fieldName] = uploadedFiles;
         next();
         
     } catch (error) {

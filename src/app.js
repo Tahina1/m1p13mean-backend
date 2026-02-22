@@ -9,6 +9,7 @@ const authorize = require("./middlewares/authorize.middleware");
 const authRoutes = require("./routes/auth.routes");
 const shopRoutes = require("./routes/shop.routes");
 const productCategoryRoutes = require("./routes/product-category.routes");
+const productRoutes = require("./routes/product.routes");
 
 const app = express();
 
@@ -37,4 +38,6 @@ app.use("/api/users", authorize("CLIENT"), userRoutes);
 app.use("/api/auth", authRoutes)
 app.use("/api/shops", shopRoutes);
 app.use("/api/product-categories", productCategoryRoutes);
+app.use("/api/products", productRoutes);
+
 module.exports = app;

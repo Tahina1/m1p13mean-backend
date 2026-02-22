@@ -14,7 +14,7 @@ exports.getProducts = async ({page=1, limit=10, name=null, categoryIds=null, min
     try {
         const query = {};      
         if(name) query.name = { $regex: name, $options: 'i' };
-        if(categoryIds) query.categories = { $in: categoryIds };
+        if(categoryIds && categoryIds.length > 0) query.categories = { $in: categoryIds };
         if(minPrice !== null || maxPrice !== null){
             query.price = {};
             if(minPrice !== null) query.price.$gte = minPrice;

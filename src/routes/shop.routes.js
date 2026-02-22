@@ -13,7 +13,7 @@ router.post('/',
     authenticate,
     authorize("ADMIN"),
     upload.array('gallery'),
-    uploadToVercelBlob,
+    uploadToVercelBlob("gallery"),
     validateCreateShop,
     shopController.createShop
 );
@@ -30,7 +30,7 @@ router.patch("/:id",
     authenticate,
     authorize("ADMIN","SHOP"),
     upload.array("gallery"),
-    uploadToVercelBlob,
+    uploadToVercelBlob("gallery"),
     validatePatchShop,
     shopController.patchShop
 )

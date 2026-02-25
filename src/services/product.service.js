@@ -10,6 +10,23 @@ exports.createProduct = async (productData) => {
     return product.save();
 }
 
+exports.updateProduct = async (productId, productData) => {
+    const product = await Product.findById(productId);
+    if(!product) throw new AppError("Product not found", 404);
+
+    const {name, description, categories, images, price, shopId, isActive, stock} = productData;
+    if(name) product.name = name;
+    if(description) product.description = description;
+    if(categories && categories.length > 0) product.categories = categories;
+    if(images && images.length > 0) product.images = images;
+    if(price) product.price = price;
+    if(shopId) product.shopId = shopId;
+    if(isActive!==undefined) product.isActive = isActive;
+    if(stock!==undefined) product.stock = stock;//in js 0 is falsy but valid, so we check for undefined instead
+
+    return product.save();
+}
+
 exports.getProducts = async ({page=1, limit=10, name=null, categoryIds=null, minPrice=null, maxPrice=null, shopId=null, isActive=null}) => {
     try {
         const query = {};      

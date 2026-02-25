@@ -1,4 +1,4 @@
-const { body, query, validationResult } = require('express-validator');
+const { body, query, param, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
 
@@ -20,8 +20,40 @@ exports.validateCreateProduct = ([
         .isArray({ min: 1 }).withMessage("At least one category ID is required")
         .custom((categoryIds) => categoryIds.every(id => mongoose.Types.ObjectId.isValid(id)))
         .withMessage("Invalid category ID format")
+        .bail()// if the previous validation failed, stop running further validations on this field
         .customSanitizer((categoryIds) => categoryIds.map(id => new mongoose.Types.ObjectId(id))),
     body("price")
+        .isFloat({ gt: 0 }).withMessage("Price must be a positive number"),
+    body("shopId")
+        .optional()
+        .custom(shopId => mongoose.Types.ObjectId.isValid(shopId))
+        .withMessage("Invalid shop ID format"),
+    body("isActive")
+        .optional()
+        .isBoolean().withMessage("isActive must be a boolean value"),
+    body("stock")
+        .optional()
+        .isInt({ min: 0 }).withMessage("Stock must be a non-negative integer"),
+    handleValidation
+]);
+
+exports.validatePatchProduct = ([
+    param("id")
+        .custom(id => mongoose.Types.ObjectId.isValid(id))
+        .withMessage("Invalid product ID format"),
+    body("name")
+        .optional()
+        .trim(),
+    body("categoryIds")
+        .optional()
+        .toArray()
+        .isArray({ min: 1 }).withMessage("At least one category ID is required")
+        .custom((categoryIds) => categoryIds.every(id => mongoose.Types.ObjectId.isValid(id)))
+        .withMessage("Invalid category ID format")
+        .bail()
+        .customSanitizer((categoryIds) => categoryIds.map(id => new mongoose.Types.ObjectId(id))),
+    body("price")
+        .optional()
         .isFloat({ gt: 0 }).withMessage("Price must be a positive number"),
     body("shopId")
         .optional()
@@ -66,7 +98,6 @@ exports.validateGetProducts = ([
         .withMessage("Invalid shop ID format"),
     query("isActive")
         .optional()
-        .isBoolean().withMessage("isActive must be a boolean value")
-        .customSanitizer(value => value === "true"),
+        .isBoolean().withMessage("isActive must be a boolean value"),
     handleValidation
 ]);

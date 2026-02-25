@@ -12,6 +12,18 @@ exports.createProduct = async (req, res) => {
     }
 }
 
+exports.updateProduct = async (req, res) => {
+    try {
+        const { categoryIds, ...rest } = req.body;
+        const productData = { ...rest, images: req.images, categories: categoryIds };
+        const productResult = await productService.updateProduct(req.params.id, productData);
+        return res.status(200).json({ message: "Product updated successfully", product: productResult });
+
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message });
+    }
+}
+
 exports.getProducts = async (req, res) => {
     try {
         const { page, limit, name, categoryIds, minPrice, maxPrice, shopId, isActive } = req.query;

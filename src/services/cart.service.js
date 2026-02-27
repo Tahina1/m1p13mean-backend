@@ -33,7 +33,7 @@ exports.addItemToCart = async (cartItemData) => {
     const { ownerId, productId, quantity } = cartItemData;
     let cart = await Cart.findOne({ ownerId }); //TODO: if user is not connected, we can use sessionId or something else to identify the cart, so ownerId is not required
     if (!cart) {
-        cart = new Cart({ ownerId, items: [], totalAmount: 0 });
+        cart = new Cart({ ownerId, items: [] });
     }
     //TODO: calculate total amount for the new item
     const product = await Product.findById(productId);
@@ -70,4 +70,45 @@ exports.addItemToCart = async (cartItemData) => {
     return await cart.save();
 }
 
+//PUT ITEM
+exports.updateItemToCart = async (ownerId, productId, quantity) => {
+    let cart = await Cart.findOne({ ownerId });
+    if (!cart) {
+        throw new AppError("Cart not found", 404);
+    }
+    const itemIndex = cart.items.findIndex(item => item.productId.equals(productId));
+    if (itemIndex === -1) {
+        throw new AppError("Item not found in cart", 404);
+    }
+    if(quantity < 1){
+        throw new AppError("Quantity must be at least 1", 400);
+    }
+    const product = await Product.findById(productId);
+    if (!product) {
+        throw new AppError("Product not found", 404);
+    }
+    if (!product.isActive) {
+        throw new AppError("Product is not active", 403);
+    }
+    if(product.stock < quantity){
+        throw new AppError("Not enough stock", 400);
+    }
+    cart.items[itemIndex].quantity = quantity;
+    return await cart.save();
+}
+
 //DELETE ITEM
+exports.removeItemFromCart = async (ownerId, productId) => {
+    let cart = await Cart.findOne({ ownerId });
+    if (!cart) {
+        throw new AppError("Cart not found", 404);
+    }
+    const itemIndex = cart.items.findIndex(item => item.productId.equals(productId));
+    if (itemIndex === -1) {
+        throw new AppError("Item not found in cart", 404);
+    }
+    //splice remove the item from the index and 1 means remove one item, 
+    //if we want to remove all items with the same productId
+    cart.items.splice(itemIndex, 1);
+    return await cart.save();
+}

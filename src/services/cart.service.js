@@ -12,7 +12,13 @@ exports.getCart = async (ownerId) => {
         cart = new Cart({ ownerId, items: [] });
         await cart.save();
         return {
-            cart,
+            cart: cart.toObject(), // ← objet JS pur (lean)
+            /*
+                Note: cart.toObject() est utilisé pour convertir le Document Mongoose en un objet JavaScript pur.
+                En pratique res.json() appelle .toJSON() sur le Document Mongoose 
+                donc le client reçoit quelque chose de similaire dans les deux cas. 
+                Ce n'est pas bloquant mais c'est une inconsistance technique.
+            */
             totalAmount: 0
         }
     }
@@ -29,8 +35,8 @@ exports.getCart = async (ownerId) => {
 }
 
 //ADD ITEM
-exports.addItemToCart = async (cartItemData) => {
-    const { ownerId, productId, quantity } = cartItemData;
+exports.addItemToCart = async (ownerId, cartItemData) => {
+    const {productId, quantity } = cartItemData;
     let cart = await Cart.findOne({ ownerId }); //TODO: if user is not connected, we can use sessionId or something else to identify the cart, so ownerId is not required
     if (!cart) {
         cart = new Cart({ ownerId, items: [] });
@@ -71,7 +77,8 @@ exports.addItemToCart = async (cartItemData) => {
 }
 
 //PUT ITEM
-exports.updateItemToCart = async (ownerId, productId, quantity) => {
+exports.updateItemToCart = async (ownerId, updatedItem) => {
+    const { productId, quantity } = updatedItem;
     let cart = await Cart.findOne({ ownerId });
     if (!cart) {
         throw new AppError("Cart not found", 404);

@@ -1,4 +1,5 @@
 const { body, query, validationResult } = require("express-validator");
+const mongoose = require("mongoose");
 
 const VALID_STATUSES = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 
@@ -46,14 +47,14 @@ const validateGetMyOrders = [
         .withMessage("Invalid status value"),
     query("startDate")
         .optional()
-        .toDate()
-        .isISO8601().withMessage("startDate must be a valid date (ISO 8601)"),
+        .isISO8601().withMessage("startDate must be a valid date (ISO 8601)")
+        .toDate(),
     query("endDate")
         .optional()
-        .toDate()
         .isISO8601().withMessage("endDate must be a valid date (ISO 8601)")
+        .toDate()
         .custom((endDate, { req }) => {
-            if (req.query.startDate && new Date(endDate) <= new Date(req.query.startDate)) {
+            if (req.query.startDate && endDate <= req.query.startDate) {
                 throw new Error("endDate must be after startDate");
             }
             return true;
@@ -61,4 +62,43 @@ const validateGetMyOrders = [
     handleValidation
 ];
 
-module.exports = { validateCheckout, validateGetMyOrders };
+const validateGetShopOrders = [
+    query("page")
+        .optional()
+        .isInt({ gt: 0 }).withMessage("Page must be a positive integer")
+        .toInt(),
+    query("limit")
+        .optional()
+        .isInt({ gt: 0 }).withMessage("Limit must be a positive integer")
+        .toInt(),
+    query("productName")
+        .optional()
+        .trim(),
+    query("customerId")
+        .optional()
+        .custom(id => mongoose.Types.ObjectId.isValid(id))
+        .withMessage("Invalid customer ID format"),
+    query("status")
+        .optional()
+        .toArray()
+        .isArray({ min: 1 }).withMessage("At least one status is required")
+        .custom((statuses) => statuses.every(s => VALID_STATUSES.includes(s)))
+        .withMessage("Invalid status value"),
+    query("startDate")
+        .optional()
+        .isISO8601().withMessage("startDate must be a valid date (ISO 8601)")
+        .toDate(),
+    query("endDate")
+        .optional()
+        .isISO8601().withMessage("endDate must be a valid date (ISO 8601)")
+        .toDate()
+        .custom((endDate, { req }) => {
+            if (req.query.startDate && endDate <= req.query.startDate) {
+                throw new Error("endDate must be after startDate");
+            }
+            return true;
+        }),
+    handleValidation
+];
+
+module.exports = { validateCheckout, validateGetMyOrders, validateGetShopOrders };

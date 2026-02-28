@@ -78,6 +78,39 @@ exports.processCheckout = async (ownerId, billingDetails, shippingAddress) => {
     } finally {
         session.endSession();
     }
+}
 
+exports.getMyOrders = async ({page=1, limit=10, productName=null, customerId=null, startDate=null, endDate=null, shopName=null, status=null} ) => {
+    try {
+        if(!customerId) throw new AppError("Customer ID is required", 400);
+        const query = { customerId };
+        if(productName) query["items.productName"] = { $regex: productName, $options: 'i'};
+        if(shopName) query.shopName = { $regex: shopName, $options: 'i' };
+        if(status && status.length > 0) query.status = { $in: status };//status is Array of status
+        if(startDate && endDate){
+            query.createdAt = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            };
+        }
 
+        const [orders, total] = await Promise.all([Order.find(query)
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean(),
+            Order.countDocuments(query)
+        ]);
+
+        return {
+            orders,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
+        }
+
+            
+    } catch (error) {
+        throw new AppError(error.message, error.status || 500);
+    }
 }

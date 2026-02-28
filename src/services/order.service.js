@@ -96,6 +96,7 @@ exports.getShopOrders = async ({ shopId, page=1, limit=10, productName=null, cus
 
         const [orders, total] = await Promise.all([
             Order.find(query)
+                .select('totalAmount status createdAt shippingAddress billingDetails.name items.productName items.quantity')
                 .sort({ createdAt: -1 })
                 .skip((page - 1) * limit)
                 .limit(limit)
@@ -123,11 +124,13 @@ exports.getMyOrders = async ({page=1, limit=10, productName=null, customerId=nul
             };
         }
 
-        const [orders, total] = await Promise.all([Order.find(query)
-            .sort({ createdAt: -1 })
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .lean(),
+        const [orders, total] = await Promise.all([
+            Order.find(query)
+                .select('shopName totalAmount status createdAt items.productName items.quantity')
+                .sort({ createdAt: -1 })
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .lean(),
             Order.countDocuments(query)
         ]);
 

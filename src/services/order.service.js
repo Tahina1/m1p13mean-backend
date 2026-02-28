@@ -146,3 +146,17 @@ exports.getMyOrders = async ({page=1, limit=10, productName=null, customerId=nul
         throw new AppError(error.message, error.status || 500);
     }
 }
+
+exports.patchShopOrder = async (orderId, shopId, updateOrderData) => {
+    try {
+        const order = await Order.findById(orderId);
+        if(!order) throw new AppError("Order not found", 404);
+        if(order.shopId.toString() !== shopId) throw new AppError("Unauthorized", 403);
+        const { status } = updateOrderData;
+        if(status) order.status = status;
+        await order.save();
+        return order;
+    } catch(error) {
+        throw new AppError(error.message, error.status || 500);
+    }
+}

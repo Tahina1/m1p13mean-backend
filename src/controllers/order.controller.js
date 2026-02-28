@@ -11,6 +11,16 @@ exports.checkout = async (req, res) => {
     }
 };
 
+exports.patchShopOrder = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await orderService.patchShopOrder(id, req.user.shopId, req.body);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
+};
+
 exports.getShopOrders = async (req, res) => {
     try {
         const { page, limit, productName, customerId, status, startDate, endDate } = req.query;

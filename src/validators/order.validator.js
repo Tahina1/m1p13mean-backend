@@ -1,4 +1,4 @@
-const { body, query, validationResult } = require("express-validator");
+const { body, query, param, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
 const VALID_STATUSES = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
@@ -101,4 +101,14 @@ const validateGetShopOrders = [
     handleValidation
 ];
 
-module.exports = { validateCheckout, validateGetMyOrders, validateGetShopOrders };
+const validatePatchShopOrder = [
+    param("id")
+        .custom(id => mongoose.Types.ObjectId.isValid(id))
+        .withMessage("Invalid order ID format"),
+    body("status")
+        .notEmpty().withMessage("Status is required")
+        .isIn(VALID_STATUSES).withMessage(`Status must be one of: ${VALID_STATUSES.join(", ")}`),
+    handleValidation
+];
+
+module.exports = { validateCheckout, validateGetMyOrders, validateGetShopOrders, validatePatchShopOrder };

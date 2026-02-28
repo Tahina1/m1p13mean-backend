@@ -35,7 +35,8 @@ exports.updateItem = async (req, res) => {
     try {
         //if (!req.user) throw new AppError("You must be logged in to update items in the cart", 401);
         const cartItemData = req.body;
-        const cartItemResult = await cartService.updateItemToCart(req.user.id, cartItemData);
+        const productId = req.params.productId;
+        const cartItemResult = await cartService.updateItemToCart(req.user.id, productId, cartItemData);
         res.status(200).json({ message: "Item updated successfully", cart: cartItemResult });
     } catch (error) {
         res.status(error.status || 500).json({ error: error.message });

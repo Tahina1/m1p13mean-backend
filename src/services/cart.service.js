@@ -77,8 +77,8 @@ exports.addItemToCart = async (ownerId, cartItemData) => {
 }
 
 //PUT ITEM
-exports.updateItemToCart = async (ownerId, updatedItem) => {
-    const { productId, quantity } = updatedItem;
+exports.updateItemToCart = async (ownerId, productId, updatedItem) => {
+    const { quantity } = updatedItem;
     let cart = await Cart.findOne({ ownerId });
     if (!cart) {
         throw new AppError("Cart not found", 404);

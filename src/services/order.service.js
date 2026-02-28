@@ -147,6 +147,31 @@ exports.getMyOrders = async ({page=1, limit=10, productName=null, customerId=nul
     }
 }
 
+exports.getMyOrderById = async (orderId, customerId) => {
+    try {
+        const order = await Order.findOne({ _id: orderId, customerId })
+            .select('customerId shopName items totalAmount status billingDetails shippingAddress createdAt')
+            .lean();
+        if (!order) throw new AppError("Order not found", 404);
+        return order;
+    } catch (error) {
+        throw new AppError(error.message, error.status || 500);
+    }
+};
+
+exports.getShopOrderById = async (orderId, shopId) => {
+    try {
+        if (!shopId) throw new AppError("shopId is required", 400);
+        const order = await Order.findOne({ _id: orderId, shopId })
+            .select('customerId items totalAmount status billingDetails shippingAddress createdAt')
+            .lean();
+        if (!order) throw new AppError("Order not found", 404);
+        return order;
+    } catch (error) {
+        throw new AppError(error.message, error.status || 500);
+    }
+};
+
 exports.patchShopOrder = async (orderId, shopId, updateOrderData) => {
     try {
         const order = await Order.findById(orderId);

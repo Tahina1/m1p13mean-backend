@@ -111,4 +111,11 @@ const validatePatchShopOrder = [
     handleValidation
 ];
 
-module.exports = { validateCheckout, validateGetMyOrders, validateGetShopOrders, validatePatchShopOrder };
+const validateGetOrderById = [
+    param("id")
+        .custom(id => mongoose.Types.ObjectId.isValid(id))
+        .withMessage("Invalid order ID format"),
+    handleValidation
+];
+
+module.exports = { validateCheckout, validateGetMyOrders, validateGetShopOrders, validatePatchShopOrder, validateGetOrderById };

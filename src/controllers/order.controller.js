@@ -11,6 +11,24 @@ exports.checkout = async (req, res) => {
     }
 };
 
+exports.getMyOrderById = async (req, res) => {
+    try {
+        const result = await orderService.getMyOrderById(req.params.id, req.user.id);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
+};
+
+exports.getShopOrderById = async (req, res) => {
+    try {
+        const result = await orderService.getShopOrderById(req.params.id, req.user.shopId);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
+};
+
 exports.patchShopOrder = async (req, res) => {
     try {
         const { id } = req.params;

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const authenticate = require("../middlewares/auth.middleware");
-const { validateCheckout, validateGetMyOrders, validateGetShopOrders, validatePatchShopOrder } = require("../validators/order.validator");
+const { validateCheckout, validateGetMyOrders, validateGetShopOrders, validatePatchShopOrder, validateGetOrderById } = require("../validators/order.validator");
 const orderController = require("../controllers/order.controller");
 
 // POST /api/orders/checkout
@@ -22,6 +22,20 @@ router.get("/shop",
     authenticate,
     validateGetShopOrders,
     orderController.getShopOrders
+);
+
+// GET /api/orders/me/:id - Get a specific order for the authenticated client
+router.get("/me/:id",
+    authenticate,
+    validateGetOrderById,
+    orderController.getMyOrderById
+);
+
+// GET /api/orders/shop/:id - Get a specific order for the authenticated shop owner
+router.get("/shop/:id",
+    authenticate,
+    validateGetOrderById,
+    orderController.getShopOrderById
 );
 
 // PATCH /api/orders/:id - Update order status (SHOP only)

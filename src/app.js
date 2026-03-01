@@ -11,6 +11,7 @@ const shopRoutes = require("./routes/shop.routes");
 const productCategoryRoutes = require("./routes/product-category.routes");
 const productRoutes = require("./routes/product.routes");
 const cartRoutes = require("./routes/cart.routes");
+const orderRoutes = require("./routes/order.routes");
 const app = express();
 
 //app.set('trust proxy', true);
@@ -34,11 +35,12 @@ connectDB().catch((err) => console.error(err));
 //app.use(express.json());
 
 // Routes
-app.use("/api/users", authorize("CLIENT"), userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes)
 app.use("/api/shops", shopRoutes);
 app.use("/api/product-categories", productCategoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
 module.exports = app;

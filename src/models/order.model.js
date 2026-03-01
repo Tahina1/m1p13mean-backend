@@ -7,15 +7,28 @@ const OrderSchema = mongoose.Schema(
             ref: "User",
             required: true
         },
+        billingDetails: {
+            name: { type: String, required: true },
+            email: { type: String, required: true },
+            phone: { type: String, required: true }
+        },
         shopId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Shop",
+            required: true
+        },
+        shopName: {
+            type: String,
             required: true
         },
         items: [{
             productId: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Product",
+                required: true
+            },
+            productName: {
+                type: String,
                 required: true
             },
             quantity: {
@@ -33,9 +46,9 @@ const OrderSchema = mongoose.Schema(
             required: true
         },
         status: {
-            type: Number,
-            default: 0, // 0: Pending, 1: Confirmed, 2: Shipped, 3: Delivered, 4: Cancelled
-            required: true
+            type: String,
+            enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+            default: "Pending"
         },
         shippingAddress: {
             type: String,

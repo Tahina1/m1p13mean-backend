@@ -24,6 +24,15 @@ exports.updateProduct = async (req, res) => {
     }
 }
 
+exports.getProductById = async (req, res) => {
+    try {
+        const product = await productService.getProductById(req.params.id);
+        return res.status(200).json(product);
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message });
+    }
+}
+
 exports.getProducts = async (req, res) => {
     try {
         const { page, limit, name, categoryIds, minPrice, maxPrice, shopId, isActive } = req.query;

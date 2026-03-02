@@ -27,6 +27,19 @@ exports.updateProduct = async (productId, productData) => {
     return product.save();
 }
 
+exports.getProductById = async (productId) => {
+    try {
+        const product = await Product.findById(productId)
+            .populate('categories', 'name')
+            .populate('shopId', 'name')
+            .lean();
+        if (!product) throw new AppError("Product not found", 404);
+        return product;
+    } catch (error) {
+        throw new AppError(error.message, error.status || 500);
+    }
+};
+
 exports.getProducts = async ({page=1, limit=10, name=null, categoryIds=null, minPrice=null, maxPrice=null, shopId=null, isActive=null}) => {
     try {
         const query = {};      

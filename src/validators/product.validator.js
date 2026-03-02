@@ -37,6 +37,13 @@ exports.validateCreateProduct = ([
     handleValidation
 ]);
 
+exports.validateGetProductById = ([
+    param("id")
+        .custom(id => mongoose.Types.ObjectId.isValid(id))
+        .withMessage("Invalid product ID format"),
+    handleValidation
+]);
+
 exports.validatePatchProduct = ([
     param("id")
         .custom(id => mongoose.Types.ObjectId.isValid(id))

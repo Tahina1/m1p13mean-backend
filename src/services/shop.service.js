@@ -55,7 +55,7 @@ exports.getShops = async ({page=1, limit=10, name=null, category=null, status=nu
         if(category) query.category = category;
         if(status) query.status = status;
         const [shops, total] = await Promise.all([Shop.find(query)
-            .select("name category ownerId status")
+            .select("name category ownerId status gallery")
             .skip((page - 1) * limit)
             .limit(limit)
             .lean(),//retourne des objets JS bruts au lieu de documents Mongoose (jusqu'à 60% plus rapide

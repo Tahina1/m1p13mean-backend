@@ -1,5 +1,4 @@
 const express = require("express");
-const connectDB = require("./config/db");
 const userRoutes = require("./routes/user.routes");
 const helmet = require('helmet');
 //const rateLimit = require('express-rate-limit');
@@ -27,9 +26,6 @@ app.use(cookieParser());
 // 12 tentatives / 15 min sur login
 //app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 12 }));
 
-
-// Connect to MongoDB
-connectDB().catch((err) => console.error(err));
 
 // Middleware to parse JSON bodies
 //app.use(express.json());
